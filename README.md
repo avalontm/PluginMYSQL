@@ -108,4 +108,5 @@ TABLE MODEL
             return MYSQL.Query<Cuenta>($"SELECT * FROM `{table}`");
         }
     }
-    ```
+    
+```
