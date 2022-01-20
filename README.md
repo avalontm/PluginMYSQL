@@ -90,6 +90,9 @@ TABLE MODEL
         public string password { set; get; }
         public string name { set; get; }
         
+        
+        //METODOS PERSONALIZADOS
+        
         public static Cuenta Get(int id)
         {
             string table = Table.Name<Cuenta>();
