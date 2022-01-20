@@ -1,5 +1,7 @@
 # PluginMYSQL
 
+you can go read the [WIKI](https://github.com/avalontm/PluginMYSQL/wiki/MYSQL)
+
 EXAMPLE
 
 ```
