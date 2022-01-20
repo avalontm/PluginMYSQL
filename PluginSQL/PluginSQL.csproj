@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <Authors>AvalonTM</Authors>
+    <Description>Plugin para simplificar el uso de MYSQL Multiplataforma [WINDOWS, LINUX, MAC, ANDROID, IOS, UWP].</Description>
+    <Copyright>AvalonTM</Copyright>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageIcon>plugin_logo.png</PackageIcon>
+    <PackageTags>mySQL</PackageTags>
+    <Version>1.0.4</Version>
+    <PackageProjectUrl>https://www.nuget.org/packages/PluginSQL</PackageProjectUrl>
+    <PackageIconUrl />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="plugin_logo.png" />
+    <None Remove="plugin_logo.png" />
+    <None Remove="PrimaryKeyAttribute.xaml" />
+    <None Include="plugin_logo.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="plugin_logo.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MySql.Data" Version="8.0.22" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Include="PrimaryKeyAttribute.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+</Project>

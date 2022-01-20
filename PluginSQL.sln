@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30711.63
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PluginSQL", "PluginSQL\PluginSQL.csproj", "{6CB2F032-D279-43B0-9AC3-4FE39389808F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DemoCONSOLE", "DemoMYSQL\DemoCONSOLE.csproj", "{8A7BEA95-D14F-43B3-967C-D9C0BEF64DD0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoWEB", "DemoWEB\DemoWEB.csproj", "{B9A5CF5A-67CB-4149-B774-33D2B046EC08}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6CB2F032-D279-43B0-9AC3-4FE39389808F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CB2F032-D279-43B0-9AC3-4FE39389808F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CB2F032-D279-43B0-9AC3-4FE39389808F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CB2F032-D279-43B0-9AC3-4FE39389808F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A7BEA95-D14F-43B3-967C-D9C0BEF64DD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A7BEA95-D14F-43B3-967C-D9C0BEF64DD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A7BEA95-D14F-43B3-967C-D9C0BEF64DD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A7BEA95-D14F-43B3-967C-D9C0BEF64DD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9A5CF5A-67CB-4149-B774-33D2B046EC08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9A5CF5A-67CB-4149-B774-33D2B046EC08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9A5CF5A-67CB-4149-B774-33D2B046EC08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9A5CF5A-67CB-4149-B774-33D2B046EC08}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {765262F6-2FF8-44DC-9BCE-681870DA8326}
+	EndGlobalSection
+EndGlobal
