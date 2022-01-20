@@ -38,5 +38,10 @@ namespace DemoMYSQL.DataBase.Tables
             string table = Table.Name<Cuenta>();
             return MYSQL.Query<Cuenta>($"SELECT * FROM `{table}`");
         }
+
+        public static int Count()
+        {
+            return int.Parse( MYSQL.ExecuteScalar($"SELECT COUNT(*) FROM `cuentas`"));
+        }
     }
 }
