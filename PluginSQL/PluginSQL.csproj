@@ -9,7 +9,7 @@
     <PackageIcon>plugin_logo.png</PackageIcon>
     <PackageTags>mySQL</PackageTags>
     <Version>1.0.5</Version>
-    <PackageProjectUrl>https://www.nuget.org/packages/PluginSQL</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/avalontm/PluginMYSQL</PackageProjectUrl>
     <PackageIconUrl />
     <RepositoryUrl>https://github.com/avalontm/PluginMYSQL</RepositoryUrl>
   </PropertyGroup>
