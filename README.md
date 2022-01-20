@@ -91,7 +91,7 @@ TABLE MODEL
         public string name { set; get; }
         
         
-        //METODOS PERSONALIZADOS
+        //METODOS PERSONALIZADOS PARA ESTA TABLA
         
         public static Cuenta Get(int id)
         {
