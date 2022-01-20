@@ -1,18 +1,16 @@
 ﻿using DemoMYSQL.DataBase.Tables;
 using PluginSQL;
 using System;
+using System.Linq;
 using System.Threading;
 
 namespace DemoMYSQL
 {
     class Program
     {
-        static bool isRunning = false;
-
         static void Main(string[] args)
         {
             Console.Title = "CoreNET - MYSQL";
-            isRunning = true;
 
             Console.CancelKeyPress += (s, ev) =>
             {
@@ -64,33 +62,18 @@ namespace DemoMYSQL
 
 
             //Si se ha conectado continuamos.
-            LOG.WriteLine($"[MYSQL]  Coneccion correcta.", ConsoleColor.Green);
+            LOG.WriteLine($"[MYSQL]  Conexion correcta.", ConsoleColor.Green);
 
             LOG.WriteLine("Iniciado. [Para detener el server preciona CTRL+C]", ConsoleColor.Green);
 
-            //Leemos los datos
-            Cuenta _cuenta = Cuenta.Get(1);
+            //Leemos todos los datos (metodo generico)
+            var cuentas = Table.GetAll<Cuenta>();
 
-            if (_cuenta != null)
+            foreach (var cuenta in cuentas)
             {
-                _cuenta.name = "avalontm21";
-                _cuenta.password = "password";
-
-                if (_cuenta.Update())
-                {
-                    _cuenta = Cuenta.Get("test", "'or '1'='1"); //Volvemos a leer.\
-
-                    if (_cuenta != null)
-                    {
-                        LOG.WriteLine($"[CUENTA] se ha actualizado.", ConsoleColor.DarkGray);
-
-                        LOG.WriteLine($"[CUENTA] Nombre: {_cuenta.name}.", ConsoleColor.White);
-                    }
-                }
-
-               
+                Console.WriteLine($"[Cuenta] {cuenta.account}");
             }
-
+            
             Console.WriteLine("");
             SpinWait.SpinUntil(() => false);
         }

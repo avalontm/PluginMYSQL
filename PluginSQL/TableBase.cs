@@ -17,27 +17,6 @@ namespace PluginSQL
 
         }
 
-        public static string GetTable<T>()
-        {
-            T table = default(T);
-            table = Activator.CreateInstance<T>();
-            TypeInfo typeInfo = table.GetType().GetTypeInfo();
-            string tbl_name = typeInfo.Name.ToLower();
-
-            var _tableName = typeInfo.GetCustomAttribute<TableNameAttribute>(true);
-
-            if (_tableName != null)
-            {
-                if (!string.IsNullOrEmpty(_tableName.Name))
-                {
-                    tbl_name = _tableName.Name.ToLower();
-                    return tbl_name;
-                }
-            }
-
-            return tbl_name.ToLower();
-        }
-
         public void Copy(object src)
         {
             if (src == null)
@@ -63,6 +42,7 @@ namespace PluginSQL
                 dstF.SetValue(this, f.GetValue(src, null), null);
             }
         }
+
         public void ToCopy(object src)
         {
             if (src == null)

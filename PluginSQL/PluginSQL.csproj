@@ -8,9 +8,10 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageIcon>plugin_logo.png</PackageIcon>
     <PackageTags>mySQL</PackageTags>
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
     <PackageProjectUrl>https://www.nuget.org/packages/PluginSQL</PackageProjectUrl>
     <PackageIconUrl />
+    <RepositoryUrl>https://github.com/avalontm/PluginMYSQL</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>

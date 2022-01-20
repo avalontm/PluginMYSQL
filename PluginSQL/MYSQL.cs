@@ -660,7 +660,7 @@ namespace PluginSQL
 
                 return items;
             }
-            catch(Exception ex)
+            catch
             {
                 items = new List<T>();
                 return items;
