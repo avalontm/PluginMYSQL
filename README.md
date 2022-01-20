@@ -110,3 +110,15 @@ TABLE MODEL
     }
     
 ```
+
+METODOS GENERALES
+
+```
+listado de una tabla
+ List<Cuenta> cuentas = Table.GetAll<Cuenta>();
+ 
+
+buscar por id
+ Cuenta cuenta = Table.Find<Cuenta>(1);
+ 
+```
