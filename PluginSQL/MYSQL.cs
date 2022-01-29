@@ -47,10 +47,10 @@ namespace PluginSQL
             con = new MySqlConnection(connectionString);
 
             MySqlCommand cmd = new MySqlCommand("SELECT COUNT(*) FROM information_schema.tables", con);
-            ErrorMessage = string.Empty;
-
+  
             try
             {
+                ErrorMessage = String.Empty;
                 con.Open();
                 int result = cmd.ExecuteNonQuery();
                 con.Close();
@@ -75,6 +75,7 @@ namespace PluginSQL
 
             try
             {
+                ErrorMessage = String.Empty;
                 con.Open();
                 var execute = cmd.ExecuteScalar();
 
@@ -94,6 +95,7 @@ namespace PluginSQL
             }
             catch(Exception ex)
             {
+                ErrorMessage = ex.Message;
                 Console.WriteLine($"[DataBaseExist] {ex}");
                 return false;
             }
@@ -125,6 +127,7 @@ namespace PluginSQL
 
             try
             {
+                ErrorMessage = String.Empty;
                 con.Open();
                 cmd.ExecuteNonQuery();
                 con.Close();
@@ -132,7 +135,7 @@ namespace PluginSQL
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex);
+                ErrorMessage = ex.Message;
                 return false;
             }
             finally
@@ -170,6 +173,7 @@ namespace PluginSQL
             int i = 0;
             try
             {
+                ErrorMessage = String.Empty;
                 con.Open();
                 cmd.Prepare();
                 var reader = cmd.ExecuteReader();
@@ -186,8 +190,9 @@ namespace PluginSQL
                 }
                 return false;
             }
-            catch
+            catch(Exception ex )
             {
+                ErrorMessage = ex.Message;
                 return false;
             }
             finally
@@ -226,6 +231,7 @@ namespace PluginSQL
             int i = 0;
             try
             {
+                ErrorMessage = String.Empty;
                 databaseConnection.Open();
                 reader = cmd.ExecuteReader();
 
@@ -241,8 +247,9 @@ namespace PluginSQL
 
                 return false;
             }
-            catch
+            catch(Exception ex)
             {
+                ErrorMessage = ex.Message;
                 return false;
             }
             finally
@@ -652,6 +659,7 @@ namespace PluginSQL
 
             try
             {
+                ErrorMessage = String.Empty;
                 databaseConnection.Open();
                 reader = cmd.ExecuteReader();
 
@@ -660,8 +668,9 @@ namespace PluginSQL
 
                 return items;
             }
-            catch
+            catch(Exception ex)
             {
+                ErrorMessage = ex.Message;
                 items = new List<T>();
                 return items;
             }
@@ -715,6 +724,7 @@ namespace PluginSQL
 
             try
             {
+                ErrorMessage = String.Empty;
                 databaseConnection.Open();
                 cmd.ExecuteNonQuery();
                 databaseConnection.Close();
@@ -722,6 +732,7 @@ namespace PluginSQL
             }
             catch (Exception ex)
             {
+                ErrorMessage = ex.Message;
                 Console.WriteLine("DeleteTable: " + ex);
                 return false;
             }
@@ -813,6 +824,7 @@ namespace PluginSQL
 
             try
             {
+                ErrorMessage = String.Empty;
                 databaseConnection.Open();
                 cmd.ExecuteNonQuery();
                 databaseConnection.Close();
@@ -820,7 +832,8 @@ namespace PluginSQL
             }
             catch (MySqlException ex)
             {
-                Console.WriteLine("Insert: " + ex);
+                ErrorMessage = ex.Message;
+                Debug.WriteLine("Insert: " + ex);
                 return false;
             }
         }
@@ -901,6 +914,7 @@ namespace PluginSQL
 
             try
             {
+                ErrorMessage = String.Empty;
                 databaseConnection.Open();
                 cmd.ExecuteNonQuery();
                 databaseConnection.Close();
@@ -908,6 +922,7 @@ namespace PluginSQL
             }
             catch (Exception ex)
             {
+                ErrorMessage = ex.Message;
                 Console.WriteLine("[UpdateTable] " + ex);
                 return false;
             }
@@ -924,6 +939,7 @@ namespace PluginSQL
 
             try
             {
+                ErrorMessage = String.Empty;
                 databaseConnection.Open();
 
                 reader = commandDatabase.ExecuteReader();
@@ -932,6 +948,7 @@ namespace PluginSQL
             }
             catch (Exception ex)
             {
+                ErrorMessage = ex.Message;
                 Console.WriteLine("Error: " + ex);
                 return null;
             }
@@ -950,6 +967,7 @@ namespace PluginSQL
 
             try
             {
+                ErrorMessage = String.Empty;
                 databaseConnection.Open();
                 commandDatabase.Prepare();
                 int ret = commandDatabase.ExecuteNonQuery();
@@ -958,6 +976,7 @@ namespace PluginSQL
             }
             catch (Exception ex)
             {
+                ErrorMessage = ex.Message;
                 Console.WriteLine("Error: " + ex);
                 return 0;
             }
@@ -976,6 +995,7 @@ namespace PluginSQL
 
             try
             {
+                ErrorMessage = String.Empty;
                 databaseConnection.Open();
                 commandDatabase.Prepare();
                 string ret = commandDatabase.ExecuteScalar().ToString();
@@ -983,6 +1003,7 @@ namespace PluginSQL
             }
             catch (Exception ex)
             {
+                ErrorMessage = ex.Message;
                 Console.WriteLine("Error: " + ex);
                 return "";
             }
