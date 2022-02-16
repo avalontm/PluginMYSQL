@@ -949,7 +949,7 @@ namespace PluginSQL
             catch (Exception ex)
             {
                 ErrorMessage = ex.Message;
-                Console.WriteLine("Error: " + ex);
+                Debug.WriteLine("Error: " + ex);
                 return null;
             }
             finally

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -56,6 +58,40 @@ namespace PluginSQL
                             return "\\" + v;
                     }
                 });
+        }
+
+        ///<summary>
+        ///Set fields to omite.
+        ///</summary>
+        ///<param name="omiteFields">filed1, field2, field2</param>
+        public static string GetFields<T>(string omiteFields = "")
+        {
+            string fields = string.Empty;
+     
+            string[] omitefields = omiteFields.Replace(" ", "").ToLower().Split(",");
+            T item = default(T);
+            item = Activator.CreateInstance<T>();
+            PropertyInfo[] fis = item.GetType().GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+
+
+            for (int i = 0; i < fis.Length; i++)
+            {
+                PropertyInfo fi = fis[i];
+
+                bool isOmite = false;
+
+                if (omitefields.Length > 0)
+                {
+                    isOmite = omitefields.Contains(fi.Name.ToLower());
+                }
+
+                if (!isOmite)
+                {
+                    fields += $"a.{fi.Name.ToLower()}, ";
+                }
+            }
+
+            return fields;
         }
     }
 }
