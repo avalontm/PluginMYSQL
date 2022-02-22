@@ -64,7 +64,7 @@ namespace PluginSQL
         ///Set fields to omite.
         ///</summary>
         ///<param name="omiteFields">filed1, field2, field2</param>
-        public static string GetFields<T>(string prefix, string omiteFields = "")
+        public static string GetFields<T>(string prefix, string omiteFields)
         {
             string fields = string.Empty;
      
@@ -90,13 +90,18 @@ namespace PluginSQL
                 {
                     if (string.IsNullOrEmpty(prefix))
                     {
-                        fields += $"{fi.Name.ToLower()}, ";
+                        fields += $"{fi.Name.ToLower()},";
                     }
                     else
                     {
                         fields += $"{prefix}.{fi.Name.ToLower()}, ";
                     }
                 }
+            }
+
+            if (!string.IsNullOrEmpty(fields))
+            {
+                fields =  fields.Substring(0, fields.Length - 1);
             }
 
             return fields;
@@ -130,8 +135,13 @@ namespace PluginSQL
 
                 if (!isOmite && skype_field == null)
                 {
-                    fields += $"{fi.Name.ToLower()}, ";
+                    fields += $"{fi.Name.ToLower()},";
                 }
+            }
+
+            if (!string.IsNullOrEmpty(fields))
+            {
+                fields = fields.Substring(0, fields.Length - 1);
             }
 
             return fields;

@@ -962,7 +962,7 @@ namespace PluginSQL
 
                 return GenerateList<T>(reader);
             }
-            catch (Exception ex)
+            catch (MySqlException ex)
             {
                 ErrorMessage = ex.Message;
                 Debug.WriteLine("Error: " + ex);
