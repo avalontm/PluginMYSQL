@@ -965,8 +965,7 @@ namespace PluginSQL
             catch (MySqlException ex)
             {
                 ErrorMessage = ex.Message;
-                Debug.WriteLine("Error: " + ex);
-                return null;
+                throw new ArgumentOutOfRangeException("[Query]", ex.Message);
             }
             finally
             {
@@ -990,11 +989,10 @@ namespace PluginSQL
 
                 return ret;
             }
-            catch (Exception ex)
+            catch (MySqlException ex)
             {
                 ErrorMessage = ex.Message;
-                Console.WriteLine("Error: " + ex);
-                return 0;
+                throw new ArgumentOutOfRangeException("[Execute]", ex.Message);
             }
             finally
             {
@@ -1017,11 +1015,10 @@ namespace PluginSQL
                 string ret = commandDatabase.ExecuteScalar().ToString();
                 return ret;
             }
-            catch (Exception ex)
+            catch (MySqlException ex)
             {
                 ErrorMessage = ex.Message;
-                Console.WriteLine("Error: " + ex);
-                return "";
+                throw new ArgumentOutOfRangeException("[ExecuteScalar]", ex.Message);
             }
             finally
             {
