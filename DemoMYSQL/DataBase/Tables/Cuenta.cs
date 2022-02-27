@@ -15,12 +15,18 @@ namespace DemoMYSQL.DataBase.Tables
         public int id { set; get; }
         public DateTime date_created { set; get; }
         public DateTime date_updated { set; get; }
+        public int rol_id { set; get; }
         public string account { set; get; }
         public string password { set; get; }
+
+        [FieldOmite]
         public string name { set; get; }
 
+        [FieldOmite]
+        public string rolname { set; get; }
+        [FieldOmite]
+        public int count { set; get; }
         //METODOS PERSONALIZADOS PARA ESTA TABLA
-
         public static Cuenta Get(int id)
         {
             string table = Table.Name<Cuenta>();
