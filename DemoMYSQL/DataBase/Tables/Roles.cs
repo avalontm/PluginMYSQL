@@ -5,12 +5,11 @@ using System.Text;
 
 namespace DemoCONSOLE.DataBase.Tables
 {
-    [TableName("users")]
-    public class Usuario : TableBase
+    public class Roles : TableBase
     {
         [PrimaryKey]
         public int id { set; get; }
-        public int account_id { set; get; }
+        public int rol_id { set; get; }
         public string name { set; get; }
     }
 }
