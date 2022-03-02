@@ -126,9 +126,11 @@ namespace DemoMYSQL
 
             List<Cuenta> cuentas = dbCuenta.Table("cuenta AS c")
                 .Join("roles AS r", "r.rol_id", "=", "c.rol_id")
-                .Join("users AS u", "u.account_id", "=", "c.id")
-                .Select("c.*, r.name AS rolname, u.name AS name, COUNT(c.id) AS count")
-                .Where("c.rol_id", ">", "0")
+                .JoinRaw("users AS u ON u.account_id = c.id")
+                .Select("c.*", "r.name AS rolname", "u.name AS name", "COUNT(c.id) AS count")
+                //.Where("c.rol_id", ">", "0")
+                .WhereRaw("c.rol_id = 1")
+                .WhereRaw("OR c.rol_id = 2")
                 .OrderBy("name", OrderBY.DESC)
                 .GroupBy("c.rol_id")
                 .Get<Cuenta>();
