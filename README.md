@@ -127,3 +127,29 @@ buscar por id
  Cuenta cuenta = Table.Find<Cuenta>(1);
  
 ```
+
+METODOS EXTRAS
+
+```
+ static void onNewMethod()
+        {
+            DB dbCuenta = new DB();
+
+            List<Cuenta> cuentas = dbCuenta.Table("cuenta AS c")
+                .Join("roles AS r", "r.rol_id", "=", "c.rol_id")
+                .Join("users AS u", "u.account_id", "=", "c.id")
+                .Select("c.*, r.name AS rolname, u.name AS name, COUNT(c.id) AS count")
+                .Where("c.rol_id", ">", "0")
+                .OrderBy("name", OrderBY.DESC)
+                .GroupBy("c.rol_id")
+                .Get<Cuenta>();
+
+            Console.WriteLine($"\n[QUERY] ({dbCuenta.ToString()})\n");
+
+            Console.WriteLine($"\n[RESULTS]\n");
+            foreach (var cuenta in cuentas)
+            {
+                Console.WriteLine($"[Cuenta] ID: {cuenta.id} | NAME: {cuenta.name} | ROL: {cuenta.rolname} | COUNT: {cuenta.count}");
+            }
+        }
+```
