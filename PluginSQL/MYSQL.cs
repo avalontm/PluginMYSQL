@@ -492,10 +492,12 @@ namespace PluginSQL
                         object _value = new object();
                         PropertyInfo fi = fis[i];
 
-                       // var skype_field = fi.GetCustomAttribute<FieldOmiteAttribute>(true);
+                        // var skype_field = fi.GetCustomAttribute<FieldOmiteAttribute>(true);
 
                         //if (skype_field == null)
                         //{
+                        try
+                        {
                             if (fi.PropertyType == typeof(int))
                             {
                                 try
@@ -626,6 +628,11 @@ namespace PluginSQL
                             }
 
                             fi.SetValue(item, Convert.ChangeType(_value, fi.PropertyType), null);
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine($"[QUERY] {ex}");
+                        }
                        // }
                     }
                     items.Add(item);
