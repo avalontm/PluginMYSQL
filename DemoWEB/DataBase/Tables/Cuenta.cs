@@ -12,6 +12,8 @@ namespace DemoWEB.DataBase.Tables
         public int id { set; get; }
         public DateTime date_created { set; get; }
         public DateTime date_updated { set; get; }
+
+        [FieldType("VARCHAR(255)")]
         public string account { set; get; }
         public string password { set; get; }
         public string name { set; get; }

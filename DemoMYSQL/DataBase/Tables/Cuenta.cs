@@ -16,7 +16,9 @@ namespace DemoMYSQL.DataBase.Tables
         public DateTime date_created { set; get; }
         public DateTime date_updated { set; get; }
         public int rol_id { set; get; }
+        [FieldType("VARCHAR(255)")]
         public string account { set; get; }
+        [FieldType("VARCHAR(255)")]
         public string password { set; get; }
 
         [FieldOmite]

@@ -73,12 +73,38 @@ namespace PluginSQL
         }
 
         /// <summary>
+        /// Select
+        /// </summary>
+        /// <param name="db"></param>
+        /// <param name="select"></param>
+        /// <returns></returns>
+        public static DB Select(this DB db, params string[] selects)
+        {
+            string select = string.Empty;
+
+
+            foreach (string _selcet in selects)
+            {
+                select += $"{_selcet},";
+            }
+
+            if (select.Substring(select.Length - 1, 1) == ",")
+            {
+                select = select.Remove(select.Length - 1, 1);
+            }
+
+            db.query.select = $"SELECT {select} ";
+
+            return db;
+        }
+
+        /// <summary>
         /// Select Raw Expressions
         /// </summary>
         /// <param name="db"></param>
         /// <param name="select"></param>
         /// <returns></returns>
-        public static DB Select(this DB db, string select = "*")
+        public static DB SelectRaw(this DB db, string select = "*")
         {
             db.query.select = $"SELECT {select} ";
             return db;
@@ -102,6 +128,30 @@ namespace PluginSQL
             else
             {
                 db.query.join.inner += $"INNER JOIN {table} ON {field}{expresion}{value}";
+            }
+
+            db.query.join.inner += " ";
+            return db;
+        }
+
+        /// <summary>
+        /// Join To Another Table
+        /// </summary>
+        /// <param name="db"></param>
+        /// <param name="table"></param>
+        /// <param name="field"></param>
+        /// <param name="expresion"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static DB JoinRaw(this DB db, string inner_join)
+        {
+            if (string.IsNullOrEmpty(db.query.join.inner))
+            {
+                db.query.join.inner = $"INNER JOIN {inner_join}";
+            }
+            else
+            {
+                db.query.join.inner += $"INNER JOIN {inner_join}";
             }
 
             db.query.join.inner += " ";
@@ -158,6 +208,28 @@ namespace PluginSQL
             else
             {
                 db.query.where += $"AND {field}{expresion}{value}";
+            }
+
+            db.query.where += " ";
+
+            return db;
+        }
+
+        /// <summary>
+        /// Where Custom
+        /// </summary>
+        /// <param name="db"></param>
+        /// <param name="where"></param>
+        /// <returns></returns>
+        public static DB WhereRaw(this DB db, string where)
+        {
+            if (string.IsNullOrEmpty(db.query.where))
+            {
+                db.query.where = $"WHERE {where}";
+            }
+            else
+            {
+                db.query.where += $"{where}";
             }
 
             db.query.where += " ";

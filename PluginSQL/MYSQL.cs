@@ -305,6 +305,7 @@ namespace PluginSQL
 
                 var attribute = fi.GetCustomAttribute<PrimaryKeyAttribute>(true);
                 var skype_field = fi.GetCustomAttribute<FieldOmiteAttribute>(true);
+                var custom_field = fi.GetCustomAttribute<FieldTypeAttribute>(true);
 
                 if (skype_field == null)
                 {
@@ -328,34 +329,42 @@ namespace PluginSQL
                     }
                     else
                     {
-                        if (fi.PropertyType == typeof(int))
+
+                        if (custom_field != null && !string.IsNullOrEmpty(custom_field.Data))
                         {
-                            ColumType = "INT NOT NULL";
+                            ColumType = custom_field.Data.ToUpper();
                         }
-                        if (fi.PropertyType == typeof(double))
+                        else
                         {
-                            ColumType = "DOUBLE NOT NULL";
-                        }
-                        if (fi.PropertyType == typeof(decimal))
-                        {
-                            ColumType = "DECIMAL(10,3) NOT NULL";
-                        }
-                        if (fi.PropertyType == typeof(float))
-                        {
-                            ColumType = "FLOAT NOT NULL";
-                        }
-                        if (fi.PropertyType == typeof(bool))
-                        {
-                            ColumType = "INT NOT NULL";
-                        }
-                        if (fi.PropertyType == typeof(string))
-                        {
-                            ColumType = "TEXT NOT NULL";
-                        }
-                        if (fi.PropertyType == typeof(DateTime))
-                        {
-                            ColumType = "DATETIME NOT NULL DEFAULT '1970-01-01 08:00:00'";
-                            ColumValue = "1970-01-01 08:00:00";
+                            if (fi.PropertyType == typeof(int))
+                            {
+                                ColumType = "INT NOT NULL";
+                            }
+                            if (fi.PropertyType == typeof(double))
+                            {
+                                ColumType = "DOUBLE NOT NULL";
+                            }
+                            if (fi.PropertyType == typeof(decimal))
+                            {
+                                ColumType = "DECIMAL(10,3) NOT NULL";
+                            }
+                            if (fi.PropertyType == typeof(float))
+                            {
+                                ColumType = "FLOAT NOT NULL";
+                            }
+                            if (fi.PropertyType == typeof(bool))
+                            {
+                                ColumType = "INT NOT NULL";
+                            }
+                            if (fi.PropertyType == typeof(string))
+                            {
+                                ColumType = "TEXT NOT NULL";
+                            }
+                            if (fi.PropertyType == typeof(DateTime))
+                            {
+                                ColumType = "DATETIME NOT NULL DEFAULT '1970-01-01 08:00:00'";
+                                ColumValue = "1970-01-01 08:00:00";
+                            }
                         }
 
                         bool columExist = ColumExist<T>(fi.Name);
