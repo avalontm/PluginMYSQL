@@ -27,7 +27,7 @@ namespace PluginSQL
         public DBJoin join { set; get; }
         public string groupby { set; get; }
         public string orderby { set; get; }
-
+        public string limit { set; get; }
 
         public DBQuery()
         {
@@ -51,7 +51,7 @@ namespace PluginSQL
         /// <returns></returns>
         public override string ToString()
         {
-            return $"{query.select}{query.table}{query.join.inner}{query.where}{query.groupby}{query.orderby}";
+            return $"{query.select}{query.table}{query.join.left}{query.join.inner}{query.where}{query.groupby}{query.orderby}{query.limit}";
         }
     }
 
@@ -131,6 +131,21 @@ namespace PluginSQL
             }
 
             db.query.join.inner += " ";
+            return db;
+        }
+
+        public static DB LeftJoin(this DB db, string table, string field, string expresion, string value)
+        {
+            if (string.IsNullOrEmpty(db.query.join.left))
+            {
+                db.query.join.left = $"LEFT JOIN {table} ON {field}{expresion}{value}";
+            }
+            else
+            {
+                db.query.join.left += $"LEFT JOIN {table} ON {field}{expresion}{value}";
+            }
+
+            db.query.join.left += " ";
             return db;
         }
 
@@ -282,7 +297,11 @@ namespace PluginSQL
             }
             catch (MySqlException ex)
             {
-               throw new ArgumentOutOfRangeException("[Get]", ex.Message);
+                throw new ArgumentOutOfRangeException("[Get]", ex.Message);
+            }
+            finally
+            {
+                db = new DB();
             }
         }
 
@@ -302,6 +321,17 @@ namespace PluginSQL
                 Debug.WriteLine($"[Count] {ex}");
                 return 0;
             }
+        }
+
+        /// <summary>
+        /// Count
+        /// </summary>
+        /// <param name="db"></param>
+        /// <returns></returns>
+        public static DB Limit(this DB db, int limit)
+        {
+            db.query.limit = $" LIMIT {limit} ";
+            return db;
         }
     }
 }

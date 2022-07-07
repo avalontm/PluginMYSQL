@@ -18,7 +18,7 @@ namespace PluginSQL
 
         public static bool Update<T>(this T item)
         {
-            return MYSQL.Update(item);
+            return MYSQL.Update<T>(item);
         }
 
         public static bool Delete<T>(this T item)

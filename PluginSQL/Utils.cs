@@ -36,7 +36,7 @@ namespace PluginSQL
 
         public static string MySQLEscape(this string str)
         {
-            return Regex.Replace(str, @"[\x00'""\b\n\r\t\cZ\\%_]",
+            return Regex.Replace(str, @"[\x00'""\b\n\r\t\cZ\\%]",
                 delegate (Match match)
                 {
                     string v = match.Value;

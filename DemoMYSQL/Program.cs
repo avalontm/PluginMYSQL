@@ -90,12 +90,12 @@ namespace DemoMYSQL
 
                     user = new Usuario();
                     user.account_id = 2;
-                    user.name = "User1";
+                    user.name = "User_1";
                     user.Insert();
 
                     user = new Usuario();
                     user.account_id = 3;
-                    user.name = "User2";
+                    user.name = "User_2";
                     user.Insert();
                 }
             }
