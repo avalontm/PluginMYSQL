@@ -305,7 +305,7 @@ namespace PluginSQL
             }
         }
 
-        public static List<TableObject> Get(this DB db)
+        public static List<object> Get(this DB db)
         {
             try
             {

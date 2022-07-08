@@ -978,7 +978,7 @@ namespace PluginSQL
             }
         }
 
-        public static List<TableObject> Query(string query)
+        public static List<object> Query(string query)
         {
             MySqlConnection databaseConnection = new MySqlConnection(connectionString);
 
@@ -988,29 +988,25 @@ namespace PluginSQL
                 commandDatabase.CommandTimeout = 60;
                 MySqlDataReader reader;
 
-
                 ErrorMessage = string.Empty;
                 databaseConnection.Open();
 
                 reader = commandDatabase.ExecuteReader();
 
-                int index = 0;
-                List<TableObject> items = new List<TableObject>();
+                List<object> items = new List<object>();
 
                 while (reader.Read())
                 {
-                   
+                    object item = new object();
+                    var _item = new Dictionary<string, object>();
 
-                    try
+                    for (int i = 0; i < reader.FieldCount; i++)
                     {
-                        TableObject item = new TableObject(){ Key = reader.GetName(index), Value = reader.GetValue(index) };
-                        items.Add(item);
-                        index++;
+                        _item.Add(reader.GetName(i), reader.GetValue(i));
                     }
-                    catch
-                    {
-                        continue;
-                    }
+
+                    item = Convert.ChangeType(_item, typeof(Dictionary<string, object>));
+                    items.Add(item);
                 }
 
                 return items;
