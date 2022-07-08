@@ -28,7 +28,7 @@ namespace PluginSQL
         public string groupby { set; get; }
         public string orderby { set; get; }
         public string limit { set; get; }
-
+        public string having { set; get; }
         public DBQuery()
         {
             join = new DBJoin();
@@ -38,7 +38,7 @@ namespace PluginSQL
 
     public class DB
     {
-        public DBQuery query { set; get; }
+        public DBQuery query { private set; get; }
 
         public DB()
         {
@@ -51,7 +51,7 @@ namespace PluginSQL
         /// <returns></returns>
         public override string ToString()
         {
-            return $"{query.select}{query.table}{query.join.left}{query.join.inner}{query.where}{query.groupby}{query.orderby}{query.limit}";
+            return $"{query.select}{query.table}{query.join.left}{query.join.inner}{query.where}{query.groupby}{query.having}{query.orderby}{query.limit}";
         }
     }
 
@@ -244,7 +244,7 @@ namespace PluginSQL
             }
             else
             {
-                db.query.where += $"{where}";
+                db.query.where += $"AND {where}";
             }
 
             db.query.where += " ";
@@ -297,7 +297,23 @@ namespace PluginSQL
             }
             catch (MySqlException ex)
             {
-                throw new ArgumentOutOfRangeException("[Get]", ex.Message);
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                db = new DB();
+            }
+        }
+
+        public static List<TableObject> Get(this DB db)
+        {
+            try
+            {
+                return MYSQL.Query(db.ToString());
+            }
+            catch (MySqlException ex)
+            {
+                throw new Exception(ex.Message);
             }
             finally
             {
@@ -331,6 +347,12 @@ namespace PluginSQL
         public static DB Limit(this DB db, int limit)
         {
             db.query.limit = $" LIMIT {limit} ";
+            return db;
+        }
+
+        public static DB Having(this DB db, string field, string expresion, string value)
+        {
+            db.query.having = $" HAVING {field}{expresion}{value} ";
             return db;
         }
     }

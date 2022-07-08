@@ -500,7 +500,6 @@ namespace PluginSQL
                     PropertyInfo fi = fis[i];
 
                     // var skype_field = fi.GetCustomAttribute<FieldOmiteAttribute>(true);
-
                     //if (skype_field == null)
                     //{
                     try
@@ -970,7 +969,55 @@ namespace PluginSQL
             catch (MySqlException ex)
             {
                 ErrorMessage = ex.Message;
-                throw new ArgumentOutOfRangeException("[Query]", ex.Message);
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+
+                databaseConnection.Close();
+            }
+        }
+
+        public static List<TableObject> Query(string query)
+        {
+            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
+
+            try
+            {
+                MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
+                commandDatabase.CommandTimeout = 60;
+                MySqlDataReader reader;
+
+
+                ErrorMessage = string.Empty;
+                databaseConnection.Open();
+
+                reader = commandDatabase.ExecuteReader();
+
+                int index = 0;
+                List<TableObject> items = new List<TableObject>();
+
+                while (reader.Read())
+                {
+                   
+
+                    try
+                    {
+                        TableObject item = new TableObject(){ Key = reader.GetName(index), Value = reader.GetValue(index) };
+                        items.Add(item);
+                        index++;
+                    }
+                    catch
+                    {
+                        continue;
+                    }
+                }
+
+                return items;
+            }
+            catch (MySqlException ex)
+            {
+                throw new Exception(ex.Message);
             }
             finally
             {
@@ -997,7 +1044,7 @@ namespace PluginSQL
             catch (MySqlException ex)
             {
                 ErrorMessage = ex.Message;
-                throw new ArgumentOutOfRangeException("[Execute]", ex.Message);
+                throw new Exception(ex.Message);
             }
             finally
             {
@@ -1023,7 +1070,7 @@ namespace PluginSQL
             catch (MySqlException ex)
             {
                 ErrorMessage = ex.Message;
-                throw new ArgumentOutOfRangeException("[ExecuteScalar]", ex.Message);
+                throw new Exception(ex.Message);
             }
             finally
             {
