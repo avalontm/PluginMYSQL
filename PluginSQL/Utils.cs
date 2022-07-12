@@ -146,5 +146,11 @@ namespace PluginSQL
 
             return fields;
         }
+
+        public static dynamic GetDynamicObject(Dictionary<string, object> properties)
+        {
+            return new TableObject(properties);
+        }
+
     }
 }

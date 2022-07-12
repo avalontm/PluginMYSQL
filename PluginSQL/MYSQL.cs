@@ -825,6 +825,7 @@ namespace PluginSQL
                     {
                         query += "'" + Convert.ToInt32(fi.GetValue(table)) + "',";
                     }
+
                     if (fi.PropertyType != typeof(bool) && fi.PropertyType != typeof(DateTime))
                     {
                         string _value = (fi.GetValue(table)?.ToString() ?? string.Empty);
@@ -832,7 +833,7 @@ namespace PluginSQL
                         {
                             _value = _value.PROTECT();
                         }
-                        query += "'" + _value + "',";
+                        query += @$"'{_value}',";
                     }
                 }
             }
@@ -916,17 +917,24 @@ namespace PluginSQL
                         {
                             query += "`" + fi.Name.ToLower() + "`='" + Convert.ToInt32(fi.GetValue(table)) + "',";
                         }
+
                         if (fi.PropertyType != typeof(bool) && fi.PropertyType != typeof(DateTime))
                         {
                             string _value = (fi.GetValue(table)?.ToString() ?? string.Empty);
 
-                            query += "`" + fi.Name.ToLower() + "`='" + _value + "',";
+                            if (!string.IsNullOrEmpty(_value))
+                            {
+                                _value = _value.PROTECT();
+                            }
+
+                            query += @$"`{fi.Name.ToLower()}`='{_value}',";
+
                         }
                     }
                 }
             }
 
-            query = query.Remove(query.Length - 1) + " WHERE " + _field + "= '" + primary + "'";
+            query = query.Remove(query.Length - 1) + " WHERE `" + _field + "`='" + primary + "'";
 
             MySqlCommand cmd = new MySqlCommand(query, databaseConnection);
             cmd.CommandTimeout = 60;
@@ -942,7 +950,7 @@ namespace PluginSQL
             catch (Exception ex)
             {
                 ErrorMessage = ex.Message;
-                throw new ArgumentOutOfRangeException("[Update]", ex.Message);
+                throw new ArgumentOutOfRangeException("[Update]", ex.Message + "\n\n" + query);
             }
         }
 
@@ -978,7 +986,7 @@ namespace PluginSQL
             }
         }
 
-        public static List<object> Query(string query)
+        public static List<TableObject> Query(string query)
         {
             MySqlConnection databaseConnection = new MySqlConnection(connectionString);
 
@@ -993,19 +1001,17 @@ namespace PluginSQL
 
                 reader = commandDatabase.ExecuteReader();
 
-                List<object> items = new List<object>();
+                List<TableObject> items = new List<TableObject>();
 
                 while (reader.Read())
                 {
-                    object item = new object();
-                    var _item = new Dictionary<string, object>();
+                    TableObject item = new TableObject();
 
                     for (int i = 0; i < reader.FieldCount; i++)
                     {
-                        _item.Add(reader.GetName(i), reader.GetValue(i));
+                        item.Add(reader.GetName(i), reader.GetValue(i));
                     }
 
-                    item = Convert.ChangeType(_item, typeof(Dictionary<string, object>));
                     items.Add(item);
                 }
 
