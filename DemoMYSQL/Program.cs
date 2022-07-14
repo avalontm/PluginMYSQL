@@ -28,9 +28,11 @@ namespace DemoMYSQL
             LOG.WriteLine($"[MYSQL] conectando con MYSQL...", ConsoleColor.Yellow);
 
             //Iniciamos la Conección a MYSQL
-            MYSQL.Init("127.0.0.1", 3306, "root", "", "demo_core");
+            MYSQL.Init("192.168.1.34", 3306, "senfu_dashboard", "O@5mtcgder21", "senfu_sys_dev");
 
-            bool isCreate = MYSQL.CreateDataBase();
+            bool isCreate = false;
+
+            //isCreate = MYSQL.CreateDataBase();
 
             if (isCreate)
             {
@@ -122,26 +124,24 @@ namespace DemoMYSQL
 
         static void onNewMethod()
         {
-            DB dbCuenta = new DB();
+            DB db = new DB();
 
-            List<Cuenta> cuentas = dbCuenta.Table("cuenta AS c")
-                .Join("roles AS r", "r.rol_id", "=", "c.rol_id")
-                .JoinRaw("users AS u ON u.account_id = c.id")
-                .Select("c.*", "r.name AS rolname", "u.name AS name", "COUNT(c.id) AS count")
-                //.Where("c.rol_id", ">", "0")
-                .WhereRaw("c.rol_id = 1")
-                .WhereRaw("OR c.rol_id = 2")
-                .OrderBy("name", OrderBY.DESC)
-                .GroupBy("c.rol_id")
-                .Get<Cuenta>();
+            var items = db.Table("lotes as l")
+                  .Join("almacenws as a", "l.id", "=", "a.idlote")
+                  .Join("tinas as ti", "ti.id", "=", "a.idtina")
+                  .Join("productos as p", "p.id", "=", "a.producto_id")
+                  .Select("ti.id, ti.nombre, ti.idarea,  p.nombre as producto, p.color AS color, '' as talla, ROUND(SUM(CASE WHEN a.transaccion='Salida' THEN (a.cantidad*-1) ELSE a.cantidad END),2) cantidad")
+                  .Where("l.inprocess", "=", "1")
+                  .Where("ti.activo", "=", "1")
+                  .Where("ti.idarea", ">", "0")
+                  .GroupBy("ti.id, l.id, a.idtalla")
+                  .OrderBy("ti.orden, ti.nombre")
+                  .Having("cantidad", ">", "0")
+                  .Get();
 
-            Console.WriteLine($"\n[QUERY] ({dbCuenta.ToString()})\n");
+            Console.WriteLine($"\n[QUERY] ({db.ToString()})\n");
 
-            Console.WriteLine($"\n[RESULTS]\n");
-            foreach (var cuenta in cuentas)
-            {
-                Console.WriteLine($"[Cuenta] ID: {cuenta.id} | NAME: {cuenta.name} | ROL: {cuenta.rolname} | COUNT: {cuenta.count}");
-            }
+            Console.WriteLine(items.ToJson());
         }
 
     }

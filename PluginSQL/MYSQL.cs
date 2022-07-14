@@ -924,7 +924,7 @@ namespace PluginSQL
 
                             if (!string.IsNullOrEmpty(_value))
                             {
-                                _value = _value.PROTECT();
+                                _value = _value.PROTECT ();
                             }
 
                             query += @$"`{fi.Name.ToLower()}`='{_value}',";
@@ -955,7 +955,6 @@ namespace PluginSQL
         }
 
         /* FUNCIONES */
-
         public static List<T> Query<T>(string query)
         {
             MySqlConnection databaseConnection = new MySqlConnection(connectionString);
