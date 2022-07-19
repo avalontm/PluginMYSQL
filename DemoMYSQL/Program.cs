@@ -28,7 +28,7 @@ namespace DemoMYSQL
             LOG.WriteLine($"[MYSQL] conectando con MYSQL...", ConsoleColor.Yellow);
 
             //Iniciamos la Conección a MYSQL
-            MYSQL.Init("192.168.1.34", 3306, "senfu_dashboard", "O@5mtcgder21", "senfu_sys_dev");
+            MYSQL.Init("127.0.0.1", 3306, "root", "", "demo");
 
             bool isCreate = false;
 
@@ -126,22 +126,30 @@ namespace DemoMYSQL
         {
             DB db = new DB();
 
-            var items = db.Table("lotes as l")
-                  .Join("almacenws as a", "l.id", "=", "a.idlote")
-                  .Join("tinas as ti", "ti.id", "=", "a.idtina")
-                  .Join("productos as p", "p.id", "=", "a.producto_id")
-                  .Select("ti.id, ti.nombre, ti.idarea,  p.nombre as producto, p.color AS color, '' as talla, ROUND(SUM(CASE WHEN a.transaccion='Salida' THEN (a.cantidad*-1) ELSE a.cantidad END),2) cantidad")
-                  .Where("l.inprocess", "=", "1")
-                  .Where("ti.activo", "=", "1")
-                  .Where("ti.idarea", ">", "0")
-                  .GroupBy("ti.id, l.id, a.idtalla")
-                  .OrderBy("ti.orden, ti.nombre")
-                  .Having("cantidad", ">", "0")
-                  .Get();
+            var items = db.Table("productos as p")
+             .Join("almacenws as a", "a.producto_id", "=", "p.id")
+             .Join("tinas as ti", "ti.id", "=", "a.idtina")
+             .Join("lotes as l", "l.id", "=", "a.idlote")
+             .Join("tallas as ta", "ta.id", "=", "a.idtalla")
+             .Select("REPLACE(IFNULL(ta.nombre,'No'), ' ','_') as talla, COALESCE(ROUND(SUM(CASE WHEN a.transaccion='Salida' THEN (a.cantidad*-1) ELSE a.cantidad END),2),0) total")
+             .Where("ti.idarea", ">", "0")
+             .Where("l.inprocess", "=", "1")
+             .Where("p.idtipo", "=", "6")
+             .WhereRaw("SUBSTRING(l.idlote,2,1) = 'A' OR SUBSTRING(l.idlote,2,1) = 'G'")
+             .GroupBy("ta.id, p.nombre, ta.nombre")
+             .Having("total", ">", "0")
+             .Get();
 
-            Console.WriteLine($"\n[QUERY] ({db.ToString()})\n");
+            if (items == null || items.Count == 0)
+            {
+                items = new List<TableObject>();
+                items.Add(Utils.GetDynamicObject(new Dictionary<string, object>() {
+                    { "talla", "NO" },
+                    { "total", 0 }})
+                );
+            }
 
-            Console.WriteLine(items.ToJson());
+            Console.WriteLine($"[RESULTADO] {items.ToJson()}");
         }
 
     }
