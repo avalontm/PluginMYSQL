@@ -1,4 +1,5 @@
-﻿using MySql.Data.MySqlClient;
+﻿using Google.Protobuf.WellKnownTypes;
+using MySql.Data.MySqlClient;
 using MySql.Data.Types;
 using System;
 using System.Collections.Generic;
@@ -354,7 +355,11 @@ namespace PluginSQL
                             }
                             if (fi.PropertyType == typeof(bool))
                             {
-                                ColumType = "INT NOT NULL";
+                                ColumType = "TINYINT NOT NULL";
+                            }
+                            if (fi.PropertyType == typeof(bool?))
+                            {
+                                ColumType = "TINYINT NULL";
                             }
                             if (fi.PropertyType == typeof(string))
                             {
@@ -467,6 +472,10 @@ namespace PluginSQL
                 return "FLOAT";
             }
             if (fi.PropertyType == typeof(bool))
+            {
+                return "TINYINT";
+            }
+            if (fi.PropertyType == typeof(bool?))
             {
                 return "TINYINT";
             }
@@ -594,6 +603,37 @@ namespace PluginSQL
                                 _value = false;
                             }
                         }
+                        if (fi.PropertyType == typeof(bool?))
+                        {
+                            try
+                            {
+                                if (reader[fi.Name] != DBNull.Value)
+                                {
+                                    int _int = reader.GetInt32(fi.Name);
+                                    if (_int == 0)
+                                    {
+                                        _value = new bool?().GetValueOrDefault(false);
+
+                                    }
+                                    else if (_int == 1)
+                                    {
+                                        _value = new bool?().GetValueOrDefault(true);
+                                    }
+                                    else if (_int == -1)
+                                    {
+                                        _value = null;
+                                    }
+                                }
+                                else
+                                {
+                                    _value = null;
+                                }
+                            }
+                            catch
+                            {
+                                _value = null;
+                            }
+                        }
                         if (fi.PropertyType == typeof(string))
                         {
                             try
@@ -633,10 +673,18 @@ namespace PluginSQL
                             }
                         }
 
-                        fi.SetValue(item, Convert.ChangeType(_value, fi.PropertyType), null);
+                        if (fi.PropertyType == typeof(bool?))
+                        {
+                            fi.SetValue(item, (bool?)_value);
+                        }
+                        else
+                        {
+                            fi.SetValue(item, Convert.ChangeType(_value, fi.PropertyType), null);
+                        }
                     }
                     catch (Exception ex)
                     {
+                        Debug.WriteLine($"[Query] {ex}");
                         continue;
                     }
                 }
@@ -826,7 +874,19 @@ namespace PluginSQL
                         query += "'" + Convert.ToInt32(fi.GetValue(table)) + "',";
                     }
 
-                    if (fi.PropertyType != typeof(bool) && fi.PropertyType != typeof(DateTime))
+                    if (fi.PropertyType == typeof(bool?))
+                    {
+                        if (fi.GetValue(table) == null)
+                        {
+                            query += "'-1',";
+                        }
+                        else
+                        {
+                            query += "'" + Convert.ToInt32(fi.GetValue(table)) + "',";
+                        }
+                    }
+
+                    if (fi.PropertyType != typeof(bool) && fi.PropertyType != typeof(bool?) && fi.PropertyType != typeof(DateTime))
                     {
                         string _value = (fi.GetValue(table)?.ToString() ?? string.Empty);
                         if (!string.IsNullOrEmpty(_value))
@@ -917,8 +977,18 @@ namespace PluginSQL
                         {
                             query += "`" + fi.Name.ToLower() + "`='" + Convert.ToInt32(fi.GetValue(table)) + "',";
                         }
-
-                        if (fi.PropertyType != typeof(bool) && fi.PropertyType != typeof(DateTime))
+                        if (fi.PropertyType == typeof(bool?))
+                        {
+                            if (fi.GetValue(table) == null)
+                            {
+                                query += "`" + fi.Name.ToLower() + "`='-1',";
+                            }
+                            else
+                            {
+                                query += "`" + fi.Name.ToLower() + "`='" + Convert.ToInt32(fi.GetValue(table)) + "',";
+                            }
+                        }
+                        if (fi.PropertyType != typeof(bool) && fi.PropertyType != typeof(bool?) && fi.PropertyType != typeof(DateTime))
                         {
                             string _value = (fi.GetValue(table)?.ToString() ?? string.Empty);
 
@@ -1081,6 +1151,4 @@ namespace PluginSQL
         }
 
     }
-
-
 }
