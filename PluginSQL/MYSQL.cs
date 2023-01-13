@@ -430,7 +430,6 @@ namespace PluginSQL
                 query += " PRIMARY KEY(id));";
             }
 
-            Debug.WriteLine($"[QUERY] {query}");
             MySqlCommand cmd = new MySqlCommand(query, con);
             cmd.CommandTimeout = 60;
 

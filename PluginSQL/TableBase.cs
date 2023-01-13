@@ -10,11 +10,17 @@ using System.Text;
 
 namespace PluginSQL
 {
-    public partial class TableBase : ViewModelBase
+    public partial class TableBase : ViewModelBase, IDisposable
     {
         public TableBase()
         {
 
+        }
+
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+            Debug.WriteLine($"[Dispose] {this.GetType().Name}");
         }
     }
 }
