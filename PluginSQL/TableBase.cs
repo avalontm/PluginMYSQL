@@ -20,7 +20,6 @@ namespace PluginSQL
         public void Dispose()
         {
             GC.SuppressFinalize(this);
-            Debug.WriteLine($"[Dispose] {this.GetType().Name}");
         }
     }
 }
