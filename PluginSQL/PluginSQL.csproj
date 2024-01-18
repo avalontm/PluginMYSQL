@@ -8,7 +8,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageIcon>plugin_logo.png</PackageIcon>
     <PackageTags>mySQL; Xamarin; database; db; portable</PackageTags>
-    <Version>1.0.9</Version>
+    <Version>1.1.0</Version>
     <PackageProjectUrl>https://github.com/avalontm/PluginMYSQL/wiki/MYSQL</PackageProjectUrl>
     <PackageIconUrl />
     <RepositoryUrl>https://github.com/avalontm/PluginMYSQL</RepositoryUrl>
@@ -22,7 +22,6 @@
   <ItemGroup>
     <None Remove="plugin_logo.png" />
     <None Remove="plugin_logo.png" />
-    <None Remove="PrimaryKeyAttribute.xaml" />
     <None Include="plugin_logo.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
@@ -36,12 +35,6 @@
   <ItemGroup>
     <PackageReference Include="MySql.Data" Version="8.0.29" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Include="PrimaryKeyAttribute.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
 
 </Project>

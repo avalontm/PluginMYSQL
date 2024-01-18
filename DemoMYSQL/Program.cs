@@ -30,9 +30,9 @@ namespace DemoMYSQL
             //Iniciamos la Conección a MYSQL
             MYSQL.Init("127.0.0.1", 3306, "root", "", "demo");
 
-            bool isCreate = false;
+            bool isCreate = true;
 
-            //isCreate = MYSQL.CreateDataBase();
+             MYSQL.CreateDataBase();
 
             if (isCreate)
             {
@@ -115,8 +115,7 @@ namespace DemoMYSQL
 
             LOG.WriteLine("Iniciado. [Para detener el server preciona CTRL+C]", ConsoleColor.Green);
 
-            onNewMethod();
-           
+  
             Console.WriteLine("");
             SpinWait.SpinUntil(() => false);
         }

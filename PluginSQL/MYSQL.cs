@@ -3,12 +3,14 @@ using MySql.Data.MySqlClient;
 using MySql.Data.Types;
 using Org.BouncyCastle.Utilities;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Xml;
 
 /***********************************/
 /* COMPLEMENTO CREADO POR AVALONTM */
@@ -297,6 +299,7 @@ namespace PluginSQL
             }
 
             int Colums = fis.Count();
+            List<string> Uniques = new List<string>();
 
             for (int i = 0; i < Colums; i++)
             {
@@ -308,6 +311,7 @@ namespace PluginSQL
                 var attribute = fi.GetCustomAttribute<PrimaryKeyAttribute>(true);
                 var skype_field = fi.GetCustomAttribute<FieldOmiteAttribute>(true);
                 var custom_field = fi.GetCustomAttribute<FieldTypeAttribute>(true);
+                var unique_field = fi.GetCustomAttribute<UniqueKeyAttribute>(true);
 
                 if (skype_field == null)
                 {
@@ -318,6 +322,12 @@ namespace PluginSQL
                     else
                     {
                         isPrimary = false;
+                    }
+
+                    if (unique_field != null)
+                    {
+                        Uniques.Add(fi.Name.ToLower());
+                        Debug.WriteLine($"[UNIQUE] {fi.Name.ToLower()}");
                     }
 
                     if (isPrimary)
@@ -331,7 +341,6 @@ namespace PluginSQL
                     }
                     else
                     {
-
                         if (custom_field != null && !string.IsNullOrEmpty(custom_field.Data))
                         {
                             ColumType = custom_field.Data.ToUpper();
@@ -422,6 +431,7 @@ namespace PluginSQL
                     _oldName = fi.Name.ToLower();
                 }
             }
+
             if (exist)
             {
                 query = query.Remove(query.Length - 1) + ");";
@@ -450,8 +460,69 @@ namespace PluginSQL
             finally
             {
                 con.Close();
+                GenerateUniques(nameTable, Uniques);
             }
         }
+
+        static void GenerateUniques(string nameTable, List<string> uniques)
+        {
+            if (uniques.Count > 0)
+            {
+                DropUniques(nameTable);
+                string query = $"ALTER TABLE `{nameTable}` ADD CONSTRAINT UC_{nameTable} UNIQUE (";
+
+                foreach (string unique in uniques)
+                {
+                    query += $"`{unique}`,";
+                }
+
+                query = query.Substring(0, query.Length - 1);
+                query += ");";
+
+                MySqlConnection con = new MySqlConnection(connectionString);
+                MySqlCommand cmd = new MySqlCommand(query, con);
+                cmd.CommandTimeout = 60;
+
+                try
+                {
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                }
+                catch (MySqlException ex)
+                {
+                    Debug.WriteLine($"[GenerateUniques] {ex}");
+                }
+                finally
+                {
+                    con.Close();
+                }
+            }
+        }
+
+        static void DropUniques(string nameTable)
+        {
+
+            string query = $"ALTER TABLE `{nameTable}` DROP INDEX UC_{nameTable};";
+
+            MySqlConnection con = new MySqlConnection(connectionString);
+            MySqlCommand cmd = new MySqlCommand(query, con);
+            cmd.CommandTimeout = 60;
+
+            try
+            {
+                con.Open();
+                cmd.ExecuteNonQuery();
+            }
+            catch (MySqlException ex)
+            {
+                Debug.WriteLine($"[GenerateUniques] {ex}");
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
+        
 
         static string GetColumType(PropertyInfo fi)
         {
@@ -1088,7 +1159,8 @@ namespace PluginSQL
             }
             catch (MySqlException ex)
             {
-                throw new Exception(ex.Message);
+                Console.WriteLine(ex);
+                return null;
             }
             finally
             {
