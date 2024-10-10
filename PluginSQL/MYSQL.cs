@@ -1,5 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 using MySql.Data.Types;
+using MySqlX.XDevAPI.Relational;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -826,9 +827,9 @@ namespace PluginSQL
                             continue;
                         }
                     }
-                }
 
-                items.Add(item);
+                    items.Add(item);
+                }
             }
             catch (Exception ex)
             {
@@ -883,8 +884,58 @@ namespace PluginSQL
             catch (Exception ex)
             {
                 ErrorMessage = ex.Message;
+                Console.WriteLine($"[Table] '{nameTable}' => {ex.Message}");
                 items = new List<T>();
                 return items;
+            }
+            finally
+            {
+                databaseConnection.Close();
+            }
+        }
+
+        public static int TableCount<T>()
+        {
+            T table = default(T);
+            table = Activator.CreateInstance<T>();
+            string nameTable = Path.GetExtension(table.GetType().ToString());
+
+            //Obtebemos el nombre de la tabla.
+            nameTable = nameTable.Substring(1).ToLower();
+
+            TypeInfo typeInfo = typeof(T).GetTypeInfo();
+            var _tableName = typeInfo.GetCustomAttribute<TableNameAttribute>(true);
+
+            if (_tableName != null)
+            {
+                if (!string.IsNullOrEmpty(_tableName.Name))
+                {
+                    nameTable = _tableName.Name.ToLower();
+                }
+            }
+
+            string query = $"SELECT COUNT(*) FROM `{nameTable}`";
+
+            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
+
+            MySqlCommand cmd = new MySqlCommand(query, databaseConnection);
+            cmd.CommandTimeout = 60;
+
+            try
+            {
+                ErrorMessage = String.Empty;
+                databaseConnection.Open();
+
+                // Ejecuta la consulta y obtiene el valor del COUNT
+                int recordCount = Convert.ToInt32(cmd.ExecuteScalar());
+
+                return recordCount;
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = ex.Message;
+                Console.WriteLine($"[Table Count] '{nameTable}' => {ex.Message}");
+                return 0;
             }
             finally
             {
