@@ -3,22 +3,23 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Authors>AvalonTM</Authors>
-    <Description>Plugin para simplificar el uso de MYSQL Multiplataforma [XAMARIN, WINDOWS, LINUX, MAC, ANDROID, IOS, UWP].</Description>
+    <Description>Plugin para simplificar el uso de MYSQL Multiplataforma NET6+ [WINDOWS, LINUX, MAC, ANDROID, IOS, UWP, AVALONIA].</Description>
     <Copyright>AvalonTM</Copyright>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageIcon>plugin_logo.png</PackageIcon>
     <PackageTags>mySQL; Xamarin; database; db; portable</PackageTags>
-    <Version>1.2.0</Version>
+    <Version>1.2.1</Version>
     <PackageProjectUrl>https://github.com/avalontm/PluginMYSQL/wiki/MYSQL</PackageProjectUrl>
     <PackageIconUrl />
     <RepositoryUrl>https://github.com/avalontm/PluginMYSQL</RepositoryUrl>
-    <AssemblyVersion>1.0.8.0</AssemblyVersion>
+    <AssemblyVersion>1.0.8.1</AssemblyVersion>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DebugType>embedded</DebugType>
   </PropertyGroup>
-
+	
   <ItemGroup>
     <None Remove="plugin_logo.png" />
     <None Remove="plugin_logo.png" />
@@ -37,4 +38,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
+	<ItemGroup>
+		<None Include="docs\README.md" Pack="True" PackagePath="\" />
+	</ItemGroup>
 </Project>

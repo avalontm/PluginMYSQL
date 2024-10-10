@@ -323,7 +323,6 @@ namespace PluginSQL
                     if (unique_field != null)
                     {
                         Uniques.Add(fi.Name.ToLower());
-                        Debug.WriteLine($"[UNIQUE] {fi.Name.ToLower()}");
                     }
 
                     if (isPrimary)
@@ -332,7 +331,6 @@ namespace PluginSQL
                         {
                             string _typeColum = GetColumType(fi);
                             query += $"`{fi.Name.ToLower() ?? string.Empty}` {_typeColum},";
-                            Debug.WriteLine($"[PRIMARY] {query}");
                         }
                     }
                     else
@@ -590,202 +588,258 @@ namespace PluginSQL
 
         static List<T> GenerateList<T>(MySqlDataReader reader)
         {
-            T item = default(T);
-            PropertyInfo[] fis = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
             List<T> items = new List<T>();
 
-            while (reader.Read())
+            try
             {
-                item = default(T);
-                item = Activator.CreateInstance<T>();
+                T item = default(T);
+                PropertyInfo[] fis = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
 
-                for (int i = 0; i < fis.Count(); i++)
+                while (reader.Read())
                 {
-                    object _value = new object();
-                    PropertyInfo fi = fis[i];
+                    item = default(T);
+                    item = Activator.CreateInstance<T>();
 
-                    // var skype_field = fi.GetCustomAttribute<FieldOmiteAttribute>(true);
-                    //if (skype_field == null)
-                    //{
-                    try
+                    for (int i = 0; i < fis.Count(); i++)
                     {
-                        if (fi.PropertyType == typeof(int))
-                        {
-                            try
-                            {
-                                if (reader[fi.Name] != DBNull.Value)
-                                {
-                                    _value = reader.GetInt32(fi.Name);
-                                }
-                                else
-                                {
-                                    _value = 0;
-                                }
-                            }
-                            catch
-                            {
-                                _value = 0;
-                            }
-                        }
-                        if (fi.PropertyType == typeof(double))
-                        {
-                            try
-                            {
-                                if (reader[fi.Name] != DBNull.Value)
-                                {
-                                    _value = reader.GetDouble(fi.Name);
-                                }
-                                else
-                                {
-                                    _value = 0;
-                                }
-                            }
-                            catch
-                            {
-                                _value = 0;
-                            }
-                        }
-                        if (fi.PropertyType == typeof(decimal))
-                        {
-                            try
-                            {
-                                if (reader[fi.Name] != DBNull.Value)
-                                {
-                                    _value = reader.GetDecimal(fi.Name);
-                                }
-                                else
-                                {
-                                    _value = 0;
-                                }
-                            }
-                            catch
-                            {
-                                _value = 0;
-                            }
-                        }
-                        if (fi.PropertyType == typeof(float))
-                        {
-                            try
-                            {
-                                if (reader[fi.Name] != DBNull.Value)
-                                {
-                                    _value = reader.GetFloat(fi.Name);
-                                }
-                                else
-                                {
-                                    _value = 0;
-                                }
-                            }
-                            catch
-                            {
-                                _value = 0;
-                            }
-                        }
-                        if (fi.PropertyType == typeof(bool))
-                        {
-                            try
-                            {
-                                if (reader[fi.Name] != DBNull.Value)
-                                {
-                                    _value = reader.GetBoolean(fi.Name);
-                                }
-                                else
-                                {
-                                    _value = false;
-                                }
-                            }
-                            catch
-                            {
-                                _value = false;
-                            }
-                        }
-                        if (fi.PropertyType == typeof(bool?))
-                        {
-                            try
-                            {
-                                if (reader[fi.Name] != DBNull.Value)
-                                {
-                                    int _int = reader.GetInt32(fi.Name);
-                                    if (_int == 0)
-                                    {
-                                        _value = new bool?().GetValueOrDefault(false);
+                        object _value = new object();
+                        PropertyInfo fi = fis[i];
 
-                                    }
-                                    else if (_int == 1)
+                        var skype_field = fi.GetCustomAttribute<FieldOmiteAttribute>(true);
+                        if (skype_field == null)
+                        {
+
+                            try
+                            {
+                                if (fi.PropertyType == typeof(int))
+                                {
+                                    try
                                     {
-                                        _value = new bool?().GetValueOrDefault(true);
+                                        if (reader[fi.Name] != DBNull.Value)
+                                        {
+                                            _value = reader.GetInt32(fi.Name);
+                                        }
+                                        else
+                                        {
+                                            _value = 0;
+                                        }
                                     }
-                                    else if (_int == -1)
+                                    catch
                                     {
-                                        _value = null;
+                                        _value = 0;
                                     }
                                 }
-                                else
+                                if (fi.PropertyType == typeof(double))
                                 {
-                                    _value = null;
+                                    try
+                                    {
+                                        if (reader[fi.Name] != DBNull.Value)
+                                        {
+                                            _value = reader.GetDouble(fi.Name);
+                                        }
+                                        else
+                                        {
+                                            _value = 0;
+                                        }
+                                    }
+                                    catch
+                                    {
+                                        _value = 0;
+                                    }
                                 }
-                            }
-                            catch
-                            {
-                                _value = null;
-                            }
-                        }
-                        if (fi.PropertyType == typeof(string))
-                        {
-                            try
-                            {
-                                if (reader[fi.Name] != DBNull.Value)
+                                if (fi.PropertyType == typeof(decimal))
                                 {
-                                    _value = reader.GetString(fi.Name);
+                                    try
+                                    {
+                                        if (reader[fi.Name] != DBNull.Value)
+                                        {
+                                            _value = reader.GetDecimal(fi.Name);
+                                        }
+                                        else
+                                        {
+                                            _value = 0;
+                                        }
+                                    }
+                                    catch
+                                    {
+                                        _value = 0;
+                                    }
                                 }
-                                else
+                                if (fi.PropertyType == typeof(float))
                                 {
-                                    _value = "";
+                                    try
+                                    {
+                                        if (reader[fi.Name] != DBNull.Value)
+                                        {
+                                            _value = reader.GetFloat(fi.Name);
+                                        }
+                                        else
+                                        {
+                                            _value = 0;
+                                        }
+                                    }
+                                    catch
+                                    {
+                                        _value = 0;
+                                    }
                                 }
-                            }
-                            catch
-                            {
-                                _value = "";
-                            }
-                        }
 
-                        if (fi.PropertyType == typeof(DateTime))
-                        {
-                            try
-                            {
-                                if (reader[fi.Name] != DBNull.Value)
+                                if (fi.PropertyType == typeof(bool) || fi.PropertyType == typeof(bool?))
                                 {
-                                    MySqlDateTime date = reader.GetMySqlDateTime(fi.Name);
-                                    _value = date.Value;
+                                    try
+                                    {
+                                        if (reader[fi.Name] != DBNull.Value)
+                                        {
+                                            if (fi.PropertyType == typeof(bool))
+                                            {
+                                                // Para bool, obtener el valor directamente
+                                                _value = reader.GetBoolean(fi.Name);
+                                            }
+                                            else if (fi.PropertyType == typeof(bool?))
+                                            {
+                                                // Para bool?, interpretar el valor como un entero
+                                                int _int = reader.GetInt32(fi.Name);
+                                                if (_int == 0)
+                                                {
+                                                    _value = false; // Se considera como false
+                                                }
+                                                else if (_int == 1)
+                                                {
+                                                    _value = true; // Se considera como true
+                                                }
+                                                else if (_int == -1)
+                                                {
+                                                    _value = null; // Se considera como null
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            // Valor por defecto
+                                            _value = fi.PropertyType == typeof(bool?) ? (bool?)null : false;
+                                        }
+                                    }
+                                    catch
+                                    {
+                                        // Manejo de errores
+                                        _value = fi.PropertyType == typeof(bool?) ? (bool?)null : false;
+                                    }
+                                }
+
+                                if (fi.PropertyType == typeof(string))
+                                {
+                                    try
+                                    {
+                                        if (reader[fi.Name] != DBNull.Value)
+                                        {
+                                            _value = reader.GetString(fi.Name);
+                                        }
+                                        else
+                                        {
+                                            _value = "";
+                                        }
+                                    }
+                                    catch
+                                    {
+                                        _value = "";
+                                    }
+                                }
+
+                                if (fi.PropertyType == typeof(DateTime) || fi.PropertyType == typeof(DateTime?))
+                                {
+                                    try
+                                    {
+                                        if (reader[fi.Name] != DBNull.Value)
+                                        {
+                                            _value = reader.GetDateTime(fi.Name);
+                                        }
+                                        else
+                                        {
+                                            _value = DateTime.UtcNow;
+                                        }
+                                    }
+                                    catch
+                                    {
+                                        _value = DateTime.UtcNow;
+                                    }
+
+                                }
+
+                                if (fi.PropertyType == typeof(DateOnly) || fi.PropertyType == typeof(DateOnly?))
+                                {
+                                    try
+                                    {
+                                        if (reader[fi.Name] != DBNull.Value)
+                                        {
+                                            _value = DateOnly.FromDateTime(reader.GetDateTime(fi.Name));
+                                        }
+                                        else
+                                        {
+                                            // Establecer el valor por defecto a la fecha actual
+                                            _value = DateOnly.FromDateTime(DateTime.Now);
+                                        }
+                                    }
+                                    catch 
+                                    {
+                                        _value = DateOnly.FromDateTime(DateTime.Now);
+                                    }
+                                }
+
+                                if (fi.PropertyType == typeof(TimeOnly) || fi.PropertyType == typeof(TimeOnly?))
+                                {
+                                    try
+                                    {
+                                        if (reader[fi.Name] != DBNull.Value)
+                                        {
+                                            _value = TimeOnly.FromTimeSpan(reader.GetTimeSpan(fi.Name));
+                                        }
+                                        else
+                                        {
+                                            _value = TimeOnly.FromDateTime(DateTime.Now);
+                                        }
+                                    }
+                                    catch
+                                    {
+                                        _value = TimeOnly.FromDateTime(DateTime.Now);
+                                    }
+                                }
+
+                                if (fi.PropertyType == typeof(bool?))
+                                {
+                                    fi.SetValue(item, (bool)_value);
+                                }
+                                else if (fi.PropertyType == typeof(DateTime) || fi.PropertyType == typeof(DateTime?))
+                                {
+                                    fi.SetValue(item, (DateTime)_value);
+                                }
+                                else if (fi.PropertyType == typeof(DateOnly) || fi.PropertyType == typeof(DateOnly?))
+                                {
+                                    fi.SetValue(item, (DateOnly)_value);
+                                }
+                                else if (fi.PropertyType == typeof(TimeOnly) || fi.PropertyType == typeof(TimeOnly?))
+                                {
+                                    fi.SetValue(item, (TimeOnly)_value);
                                 }
                                 else
                                 {
-                                    _value = DateTime.Now;
+                                    fi.SetValue(item, Convert.ChangeType(_value, fi.PropertyType), null);
                                 }
                             }
-                            catch
+                            catch (Exception ex)
                             {
-                                _value = DateTime.Now;
+                                Debug.WriteLine($"[Query] {ex}");
+                                Console.WriteLine($"[Query] {ex.Message}");
+                                continue;
                             }
-                        }
-
-                        if (fi.PropertyType == typeof(bool?))
-                        {
-                            fi.SetValue(item, (bool?)_value);
-                        }
-                        else
-                        {
-                            fi.SetValue(item, Convert.ChangeType(_value, fi.PropertyType), null);
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine($"[Query] {ex}");
-                        continue;
-                    }
+
+                    items.Add(item);
                 }
-
-                items.Add(item);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
             }
 
             return items;
@@ -1067,8 +1121,24 @@ namespace PluginSQL
                     {
                         if (fi.PropertyType == typeof(DateTime))
                         {
-                            query += "`" + fi.Name.ToLower() + "`='" + DateTime.Parse(fi.GetValue(table).ToString()).ToString("yyyy-MM-dd HH:mm:ss") + "',";
+                            query += "`" + fi.Name.ToLower() + "`='" + ((DateTime)fi.GetValue(table)).ToString("yyyy-MM-dd HH:mm:ss") + "',";
                         }
+
+                        if (fi.PropertyType == typeof(DateOnly))
+                        {
+                            DateOnly dateOnlyValue = (DateOnly)fi.GetValue(table);
+                            DateTime dateTimeValue = dateOnlyValue.ToDateTime(TimeOnly.MinValue); // Convierte DateOnly a DateTime con la hora mínima
+                            query += "`" + fi.Name.ToLower() + "`='" + dateTimeValue.ToString("yyyy-MM-dd HH:mm:ss") + "',";
+                        }
+
+                        if (fi.PropertyType == typeof(TimeOnly))
+                        {
+                            TimeOnly timeOnlyValue = (TimeOnly)fi.GetValue(table);
+                            DateTime dateTimeValue = new DateTime(1, 1, 1, timeOnlyValue.Hour, timeOnlyValue.Minute, timeOnlyValue.Second); // Crea un DateTime arbitrario
+                            query += "`" + fi.Name.ToLower() + "`='" + dateTimeValue.ToString("yyyy-MM-dd HH:mm:ss") + "',";
+                        }
+
+
                         if (fi.PropertyType == typeof(bool))
                         {
                             query += "`" + fi.Name.ToLower() + "`='" + Convert.ToInt32(fi.GetValue(table)) + "',";
@@ -1084,7 +1154,7 @@ namespace PluginSQL
                                 query += "`" + fi.Name.ToLower() + "`='" + Convert.ToInt32(fi.GetValue(table)) + "',";
                             }
                         }
-                        if (fi.PropertyType != typeof(bool) && fi.PropertyType != typeof(bool?) && fi.PropertyType != typeof(DateTime))
+                        if (fi.PropertyType != typeof(bool) && fi.PropertyType != typeof(bool?) && fi.PropertyType != typeof(DateTime) && fi.PropertyType != typeof(DateOnly) && fi.PropertyType != typeof(TimeOnly))
                         {
                             string _value = (fi.GetValue(table)?.ToString() ?? string.Empty);
 
@@ -1142,6 +1212,7 @@ namespace PluginSQL
             catch (MySqlException ex)
             {
                 ErrorMessage = ex.Message;
+                Console.WriteLine($"[Query] '{query}' \n\r {ex.Message}");
                 throw new Exception(ex.Message);
             }
             finally
