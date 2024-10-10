@@ -1,16 +1,11 @@
-﻿using Google.Protobuf.WellKnownTypes;
-using MySql.Data.MySqlClient;
+﻿using MySql.Data.MySqlClient;
 using MySql.Data.Types;
-using Org.BouncyCastle.Utilities;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Xml;
 
 /***********************************/
 /* COMPLEMENTO CREADO POR AVALONTM */
@@ -21,9 +16,9 @@ namespace PluginSQL
     public static class MYSQL
     {
         public static string connectionString { private set; get; }
-        public static string connectionTest  { private set; get; }
-        public static string connectionNew  { private set; get; }
-        public static string ErrorMessage  { private set; get; }
+        public static string connectionTest { private set; get; }
+        public static string connectionNew { private set; get; }
+        public static string ErrorMessage { private set; get; }
         static string host, user, password, database;
         static int port;
 
@@ -51,7 +46,7 @@ namespace PluginSQL
             con = new MySqlConnection(connectionString);
 
             MySqlCommand cmd = new MySqlCommand("SELECT COUNT(*) FROM information_schema.tables", con);
-  
+
             try
             {
                 ErrorMessage = String.Empty;
@@ -72,7 +67,7 @@ namespace PluginSQL
         {
             ConnectNew(host, port, user, password);
             string query = $"SHOW DATABASES LIKE '{table.ToLower()}'";
-           
+
             MySqlConnection con = new MySqlConnection(connectionNew);
             MySqlCommand cmd = new MySqlCommand(query, con);
             cmd.CommandTimeout = 60;
@@ -97,7 +92,7 @@ namespace PluginSQL
                     return false;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ErrorMessage = ex.Message;
                 Console.WriteLine($"[DataBaseExist] {ex}");
@@ -137,7 +132,7 @@ namespace PluginSQL
                 con.Close();
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ErrorMessage = ex.Message;
                 return false;
@@ -194,7 +189,7 @@ namespace PluginSQL
                 }
                 return false;
             }
-            catch(Exception ex )
+            catch (Exception ex)
             {
                 ErrorMessage = ex.Message;
                 return false;
@@ -251,7 +246,7 @@ namespace PluginSQL
 
                 return false;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ErrorMessage = ex.Message;
                 return false;
@@ -274,6 +269,7 @@ namespace PluginSQL
             string query = string.Empty;
             string _oldName = "";
             bool isPrimary = false;
+            int colums = 0;
 
             //Obtebemos el nombre de la tabla.
             nameTable = nameTable.Substring(1).ToLower();
@@ -288,7 +284,7 @@ namespace PluginSQL
                     nameTable = _tableName.Name.ToLower();
                 }
             }
-           
+
             if (exist)
             {
                 query = $"ALTER TABLE `{nameTable}` ADD COLUMN (";
@@ -363,29 +359,36 @@ namespace PluginSQL
                             {
                                 ColumType = "FLOAT NOT NULL";
                             }
-                            if (fi.PropertyType == typeof(bool))
+                            if (fi.PropertyType == typeof(bool) || fi.PropertyType == typeof(bool?))
                             {
                                 ColumType = "TINYINT NOT NULL";
-                            }
-                            if (fi.PropertyType == typeof(bool?))
-                            {
-                                ColumType = "TINYINT NULL";
                             }
                             if (fi.PropertyType == typeof(string))
                             {
                                 ColumType = "TEXT NOT NULL";
                             }
-                            if (fi.PropertyType == typeof(DateTime))
+                            if (fi.PropertyType == typeof(DateTime) || fi.PropertyType == typeof(DateTime?))
                             {
                                 ColumType = "DATETIME NOT NULL DEFAULT '1970-01-01 08:00:00'";
                                 ColumValue = "1970-01-01 08:00:00";
                             }
+                            if (fi.PropertyType == typeof(DateOnly) || fi.PropertyType == typeof(DateOnly?))
+                            {
+                                ColumType = "DATE NOT NULL DEFAULT CURRENT_DATE"; // Puedes establecer el valor predeterminado a la fecha actual
+                                ColumValue = DateOnly.FromDateTime(DateTime.Now).ToString(); // Establecer el valor predeterminado a la fecha actual
+                            }
+                            if (fi.PropertyType == typeof(TimeOnly) || fi.PropertyType == typeof(TimeOnly?))
+                            {
+                                ColumType = "TIME NOT NULL DEFAULT '08:00:00'";
+                                ColumValue = "08:00:00";
+                            }
                         }
 
                         bool columExist = ColumExist<T>(fi.Name);
-
+              
                         if (!columExist)
                         {
+                            colums++;
                             query += "`" + fi.Name.ToLower() + "` " + ColumType + ",";
                         }
                         else
@@ -434,7 +437,22 @@ namespace PluginSQL
 
             if (exist)
             {
-                query = query.Remove(query.Length - 1) + ");";
+                // Verificar si el query termina con una coma y si tiene un paréntesis abierto al final
+                if (query.EndsWith(",") || query.EndsWith("("))
+                {
+                    // Si termina con una coma, eliminarla
+                    if (query.EndsWith(","))
+                    {
+                        query = query.Remove(query.Length - 1); // Eliminar la última coma
+                    }
+                    // Ahora agregar el paréntesis de cierre
+                    query += ");"; // Cerrar la declaración
+                }
+
+                if(colums == 0)
+                {
+                    return;
+                }
             }
             else
             {
@@ -453,7 +471,10 @@ namespace PluginSQL
             }
             catch (MySqlException ex)
             {
-                Debug.WriteLine("[CreateTable]: " + ex);
+                string _title = exist ? "UPDATE" : "CREATE";
+
+                Debug.WriteLine($"[TABLE {_title}]: \"{query}\" \n\r '{nameTable}' => {ex}" );
+                Console.WriteLine($"[TABLE {_title}]: \"{query}\" \n\r '{nameTable}' => {ex.Message}");
                 con.Close();
                 return;
             }
@@ -522,7 +543,7 @@ namespace PluginSQL
                 con.Close();
             }
         }
-        
+
 
         static string GetColumType(PropertyInfo fi)
         {
@@ -542,11 +563,7 @@ namespace PluginSQL
             {
                 return "FLOAT";
             }
-            if (fi.PropertyType == typeof(bool))
-            {
-                return "TINYINT";
-            }
-            if (fi.PropertyType == typeof(bool?))
+            if (fi.PropertyType == typeof(bool) || fi.PropertyType == typeof(bool?))
             {
                 return "TINYINT";
             }
@@ -554,9 +571,17 @@ namespace PluginSQL
             {
                 return "VARCHAR(255)";
             }
-            if (fi.PropertyType == typeof(DateTime))
+            if (fi.PropertyType == typeof(DateTime) || fi.PropertyType == typeof(DateTime?))
             {
                 return "DATETIME";
+            }
+            if (fi.PropertyType == typeof(DateOnly) || fi.PropertyType == typeof(DateOnly?))
+            {
+                return "DATE";
+            }
+            if (fi.PropertyType == typeof(TimeOnly) || fi.PropertyType == typeof(TimeOnly?))
+            {
+                return "TIME";
             }
 
             return "INT AUTO_INCREMENT";
@@ -807,7 +832,7 @@ namespace PluginSQL
 
                 return items;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ErrorMessage = ex.Message;
                 items = new List<T>();
@@ -1065,7 +1090,7 @@ namespace PluginSQL
 
                             if (!string.IsNullOrEmpty(_value))
                             {
-                                _value = _value.PROTECT ();
+                                _value = _value.PROTECT();
                             }
 
                             query += @$"`{fi.Name.ToLower()}`='{_value}',";
