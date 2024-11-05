@@ -1059,9 +1059,23 @@ namespace PluginSQL
 
                 if (skype_field == null)
                 {
-                    if (fi.PropertyType == typeof(DateTime))
+                    if (fi.PropertyType == typeof(DateTime) || fi.PropertyType == typeof(DateTime?))
                     {
                         query += "'" + DateTime.Parse(fi.GetValue(table).ToString()).ToString("yyyy-MM-dd HH:mm:ss") + "',";
+                    }
+
+                    if (fi.PropertyType == typeof(DateOnly) || fi.PropertyType == typeof(DateOnly?))
+                    {
+                        var dateValue = fi.GetValue(table) as DateOnly?;
+                        Debug.WriteLine($"dateValue: {dateValue.Value:yyyy-MM-dd}");
+                        query += dateValue.HasValue ? $"'{dateValue.Value:yyyy-MM-dd}'," : "'0000-00-00',";
+                    }
+
+                    if (fi.PropertyType == typeof(TimeOnly) || fi.PropertyType == typeof(TimeOnly?))
+                    {
+                        var timeValue = fi.GetValue(table) as TimeOnly?;
+                        Debug.WriteLine($"timeValue: {timeValue.Value:HH:mm:ss}");
+                        query += timeValue.HasValue ? $"'{timeValue.Value:HH:mm:ss}'," : "'00:00:00',";
                     }
 
                     if (fi.PropertyType == typeof(bool))
@@ -1081,7 +1095,7 @@ namespace PluginSQL
                         }
                     }
 
-                    if (fi.PropertyType != typeof(bool) && fi.PropertyType != typeof(bool?) && fi.PropertyType != typeof(DateTime))
+                    if (fi.PropertyType != typeof(bool) && fi.PropertyType != typeof(bool?) && fi.PropertyType != typeof(DateTime) && fi.PropertyType != typeof(DateTime?)  && fi.PropertyType != typeof(DateOnly) && fi.PropertyType != typeof(DateOnly?)  && fi.PropertyType != typeof(TimeOnly) && fi.PropertyType != typeof(TimeOnly?))
                     {
                         string _value = (fi.GetValue(table)?.ToString() ?? string.Empty);
                         if (!string.IsNullOrEmpty(_value))
@@ -1164,19 +1178,19 @@ namespace PluginSQL
                     }
                     else
                     {
-                        if (fi.PropertyType == typeof(DateTime))
+                        if (fi.PropertyType == typeof(DateTime) || fi.PropertyType == typeof(DateTime?))
                         {
                             query += "`" + fi.Name.ToLower() + "`='" + ((DateTime)fi.GetValue(table)).ToString("yyyy-MM-dd HH:mm:ss") + "',";
                         }
 
-                        if (fi.PropertyType == typeof(DateOnly))
+                        if (fi.PropertyType == typeof(DateOnly) || fi.PropertyType == typeof(DateOnly?))
                         {
                             DateOnly dateOnlyValue = (DateOnly)fi.GetValue(table);
                             DateTime dateTimeValue = dateOnlyValue.ToDateTime(TimeOnly.MinValue); // Convierte DateOnly a DateTime con la hora mínima
                             query += "`" + fi.Name.ToLower() + "`='" + dateTimeValue.ToString("yyyy-MM-dd HH:mm:ss") + "',";
                         }
 
-                        if (fi.PropertyType == typeof(TimeOnly))
+                        if (fi.PropertyType == typeof(TimeOnly) || fi.PropertyType == typeof(TimeOnly?))
                         {
                             TimeOnly timeOnlyValue = (TimeOnly)fi.GetValue(table);
                             DateTime dateTimeValue = new DateTime(1, 1, 1, timeOnlyValue.Hour, timeOnlyValue.Minute, timeOnlyValue.Second); // Crea un DateTime arbitrario
@@ -1199,7 +1213,7 @@ namespace PluginSQL
                                 query += "`" + fi.Name.ToLower() + "`='" + Convert.ToInt32(fi.GetValue(table)) + "',";
                             }
                         }
-                        if (fi.PropertyType != typeof(bool) && fi.PropertyType != typeof(bool?) && fi.PropertyType != typeof(DateTime) && fi.PropertyType != typeof(DateOnly) && fi.PropertyType != typeof(TimeOnly))
+                        if (fi.PropertyType != typeof(bool) && fi.PropertyType != typeof(bool?) && fi.PropertyType != typeof(DateTime) && fi.PropertyType != typeof(DateTime?) && fi.PropertyType != typeof(DateOnly) && fi.PropertyType != typeof(DateOnly?) && fi.PropertyType != typeof(TimeOnly) && fi.PropertyType != typeof(TimeOnly?))
                         {
                             string _value = (fi.GetValue(table)?.ToString() ?? string.Empty);
 

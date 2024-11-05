@@ -8,11 +8,11 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageIcon>plugin_logo.png</PackageIcon>
     <PackageTags>mySQL; Xamarin; database; db; portable</PackageTags>
-    <Version>1.2.3</Version>
+    <Version>1.2.4</Version>
     <PackageProjectUrl>https://github.com/avalontm/PluginMYSQL/wiki/MYSQL</PackageProjectUrl>
     <PackageIconUrl />
     <RepositoryUrl>https://github.com/avalontm/PluginMYSQL</RepositoryUrl>
-    <AssemblyVersion>1.2.3.0</AssemblyVersion>
+    <AssemblyVersion>1.2.4.0</AssemblyVersion>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
