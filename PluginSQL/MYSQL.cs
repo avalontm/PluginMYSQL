@@ -1,6 +1,4 @@
 ﻿using MySql.Data.MySqlClient;
-using MySql.Data.Types;
-using MySqlX.XDevAPI.Relational;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -24,7 +22,7 @@ namespace PluginSQL
         static int port;
 
         /* Conexion normal */
-        public static void Init(string _host, int _port, string _user, string _password, string _database)
+        public static void Init(string _host, int _port, string _user, string _password, string _database, string _sslmode = "none")
         {
             host = _host;
             port = _port;
@@ -32,12 +30,12 @@ namespace PluginSQL
             password = _password;
             database = _database;
 
-            connectionString = $"datasource={_host};port={_port};username={_user};password={_password};database={_database};SslMode=none;Convert Zero Datetime=True;UseCompression=True;CharSet=utf8;";
+            connectionString = $"datasource={_host};port={_port};username={_user};password={_password};database={_database};SslMode={_sslmode};Convert Zero Datetime=True;UseCompression=True;CharSet=utf8;";
         }
 
-        static void ConnectNew(string host, int port, string user, string password)
+        static void ConnectNew(string host, int port, string user, string password, string sslmode = "none")
         {
-            connectionNew = "server=" + host + ";port=" + port + ";userid=" + user + ";password=" + password + ";" + "SslMode=none;Convert Zero Datetime=True;UseCompression=True;CharSet=utf8;";
+            connectionNew = $"server={host};port={port};userid={user};password={password};SslMode={sslmode};Convert Zero Datetime=True;UseCompression=True;CharSet=utf8;";
         }
 
         public static bool CheckStatus()
@@ -384,7 +382,7 @@ namespace PluginSQL
                         }
 
                         bool columExist = ColumExist<T>(fi.Name);
-              
+
                         if (!columExist)
                         {
                             colums++;
@@ -448,7 +446,7 @@ namespace PluginSQL
                     query += ");"; // Cerrar la declaración
                 }
 
-                if(colums == 0)
+                if (colums == 0)
                 {
                     return;
                 }
@@ -472,7 +470,7 @@ namespace PluginSQL
             {
                 string _title = exist ? "UPDATE" : "CREATE";
 
-                Debug.WriteLine($"[TABLE {_title}]: \"{query}\" \n\r '{nameTable}' => {ex}" );
+                Debug.WriteLine($"[TABLE {_title}]: \"{query}\" \n\r '{nameTable}' => {ex}");
                 Console.WriteLine($"[TABLE {_title}]: \"{query}\" \n\r '{nameTable}' => {ex.Message}");
                 con.Close();
                 return;
@@ -801,7 +799,7 @@ namespace PluginSQL
                                 }
                             }
 
-                            if (fi.PropertyType == typeof(bool?))
+                            if (fi.PropertyType == typeof(bool) || fi.PropertyType == typeof(bool?))
                             {
                                 fi.SetValue(item, (bool)_value);
                             }
@@ -1095,7 +1093,7 @@ namespace PluginSQL
                         }
                     }
 
-                    if (fi.PropertyType != typeof(bool) && fi.PropertyType != typeof(bool?) && fi.PropertyType != typeof(DateTime) && fi.PropertyType != typeof(DateTime?)  && fi.PropertyType != typeof(DateOnly) && fi.PropertyType != typeof(DateOnly?)  && fi.PropertyType != typeof(TimeOnly) && fi.PropertyType != typeof(TimeOnly?))
+                    if (fi.PropertyType != typeof(bool) && fi.PropertyType != typeof(bool?) && fi.PropertyType != typeof(DateTime) && fi.PropertyType != typeof(DateTime?) && fi.PropertyType != typeof(DateOnly) && fi.PropertyType != typeof(DateOnly?) && fi.PropertyType != typeof(TimeOnly) && fi.PropertyType != typeof(TimeOnly?))
                     {
                         string _value = (fi.GetValue(table)?.ToString() ?? string.Empty);
                         if (!string.IsNullOrEmpty(_value))
@@ -1276,7 +1274,6 @@ namespace PluginSQL
             }
             finally
             {
-
                 databaseConnection.Close();
             }
         }

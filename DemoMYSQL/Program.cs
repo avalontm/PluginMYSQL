@@ -28,9 +28,9 @@ namespace DemoMYSQL
             LOG.WriteLine($"[MYSQL] conectando con MYSQL...", ConsoleColor.Yellow);
 
             //Iniciamos la Conección a MYSQL
-            MYSQL.Init("127.0.0.1", 3306, "root", "", "demo");
+            MYSQL.Init("127.0.0.1", 3306, "root", "", "cinetix_service");
 
-            bool isCreate = true;
+            bool isCreate = false;
 
              MYSQL.CreateDataBase();
 
@@ -115,7 +115,12 @@ namespace DemoMYSQL
 
             LOG.WriteLine("Iniciado. [Para detener el server preciona CTRL+C]", ConsoleColor.Green);
 
+            List<Seat> seats = Seat.Get(1);
   
+            foreach(Seat seat in seats)
+            {
+                Console.WriteLine($"seat: {seat.name}");
+            }
             Console.WriteLine("");
             SpinWait.SpinUntil(() => false);
         }
