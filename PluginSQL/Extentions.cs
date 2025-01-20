@@ -12,6 +12,11 @@ namespace PluginSQL
         /* Extenciones para el manejo de MYSQL */
         /* *******************************************************************************************************************************************/
 
+        public static long Create<T>(this T item)
+        {
+            return MYSQL.Create<T>(item);
+        }
+
         public static bool Insert<T>(this T item)
         {
             return MYSQL.Insert<T>(item);

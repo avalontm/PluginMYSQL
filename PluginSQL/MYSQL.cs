@@ -1125,6 +1125,92 @@ namespace PluginSQL
             }
         }
 
+        public static long Create<T>(T table)
+        {
+            PropertyInfo[] fis = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+            string nameTable = Path.GetExtension(table.GetType().ToString());
+
+            // Obtener el nombre de la tabla
+            nameTable = nameTable.Substring(1).ToLower();
+
+            TypeInfo typeInfo = typeof(T).GetTypeInfo();
+            var _tableName = typeInfo.GetCustomAttribute<TableNameAttribute>(true);
+
+            if (_tableName != null && !string.IsNullOrEmpty(_tableName.Name))
+            {
+                nameTable = _tableName.Name.ToLower();
+            }
+
+            string query = $"INSERT INTO `{nameTable}` (";
+            string id = "";
+
+            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
+
+            for (int i = 0; i < fis.Count(); i++)
+            {
+                PropertyInfo fi = fis[i];
+                var skype_field = fi.GetCustomAttribute<FieldOmiteAttribute>(true);
+
+                if (skype_field == null)
+                {
+                    query += "`" + fi.Name.ToLower() + "`,";
+                }
+            }
+
+            query = query.Remove(query.Length - 1) + ") VALUES(";
+
+            for (int i = 0; i < fis.Count(); i++)
+            {
+                PropertyInfo fi = fis[i];
+                var skype_field = fi.GetCustomAttribute<FieldOmiteAttribute>(true);
+
+                if (skype_field == null)
+                {
+                    if (fi.PropertyType == typeof(DateTime))
+                    {
+                        query += "'" + DateTime.Parse(fi.GetValue(table).ToString()).ToString("yyyy-MM-dd HH:mm:ss") + "',";
+                    }
+                    else if (fi.PropertyType == typeof(bool))
+                    {
+                        query += "'" + Convert.ToInt32(fi.GetValue(table)) + "',";
+                    }
+                    else if (fi.PropertyType == typeof(bool?))
+                    {
+                        query += fi.GetValue(table) == null ? "'-1'," : $"'{Convert.ToInt32(fi.GetValue(table))}',";
+                    }
+                    else
+                    {
+                        string _value = (fi.GetValue(table)?.ToString() ?? string.Empty).PROTECT();
+                        query += @$"'{_value}',";
+                    }
+                }
+            }
+
+            query = query.Remove(query.Length - 1) + "); SELECT LAST_INSERT_ID();";
+
+            MySqlCommand cmd = new MySqlCommand(query, databaseConnection);
+            cmd.CommandTimeout = 60;
+
+            try
+            {
+                ErrorMessage = string.Empty;
+                databaseConnection.Open();
+
+                // Ejecuta el comando y obtiene el ID insertado
+                object result = cmd.ExecuteScalar();
+                databaseConnection.Close();
+
+                // Convierte el resultado en un entero largo (ID)
+                return result != null ? Convert.ToInt64(result) : -1;
+            }
+            catch (MySqlException ex)
+            {
+                ErrorMessage = ex.Message;
+                throw new ArgumentOutOfRangeException("[Insert]", ex.Message);
+            }
+        }
+
+
         public static bool Update<T>(T table)
         {
             PropertyInfo[] fis = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
